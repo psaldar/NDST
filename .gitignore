@@ -1,0 +1,16 @@
+# ignore:
+
+# Ipython notebook checkpoints
+.ipynb_checkpoints/*
+
+# Byte-compiled / optimized / DLL files:
+/__pycache__/*
+*.py[cod]
+
+# logs
+logs/*
+*.log
+
+.vscode/*
+
+data/salidas/*
