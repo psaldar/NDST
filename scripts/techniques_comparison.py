@@ -38,7 +38,7 @@ numiter = 25
 p_dista = 2 
 
 if WD_gapminder:
-    WD_real = pd.read_csv('../data/etiquetas_reales_WD.csv').rename(columns={'Country': 'country'})
+    WD_real = pd.read_csv('../data/real_labels_WD.csv').rename(columns={'Country': 'country'})
     WD_real = WD_real.melt(id_vars=['country'], var_name='Date')
     WD_real['Date'] = WD_real['Date'].astype(int)
     WD_real['value'] = WD_real['value'] - 1
@@ -345,7 +345,7 @@ for esce in escenarios_c:
 
                 reales = datos_e_i.merge(WD_real_i[['country', 'value']], how='left', on='country').value.values
             else:
-                df_hdi = pd.read_csv('../data/HDI_rellenados.csv')
+                df_hdi = pd.read_csv('../data/HDI_filled.csv')
                 porc_datos_low = 0.25
                 porc_datos_high = 0.25
                 porc_datos_medium = 1 - porc_datos_high - porc_datos_low
