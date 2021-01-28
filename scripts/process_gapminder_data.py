@@ -94,7 +94,7 @@ cant_paises = len(data['country'].unique())
 
 ### Information for scenario 3
 if 'world_development' in PATH and experiment == 3:
-    list_paises = list(pd.read_csv('../data/etiquetas_reales_WD.csv')['Country'].values)
+    list_paises = list(pd.read_csv('../data/real_labels_WD.csv')['Country'].values)
     data = data[data.country.isin(list_paises)].reset_index(drop=True)
     
     ### countries cutoff for scenario 3

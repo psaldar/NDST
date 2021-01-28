@@ -13,4 +13,5 @@ logs/*
 
 .vscode/*
 
-data/salidas/*
+data/outputs/*
+data/*.csv
