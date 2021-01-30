@@ -4,7 +4,7 @@ A new segmentation approach using dynamic variables on individuals
 
 ## Description
 
- This repository contains all data files required to reproduce the analysis in the work "A new segmentation approach using dynamic variables on individuals", by Nicolás Prieto, Henry Laniado and Juan Carlos Monroy.
+ This repository contains all data files required to reproduce the analysis in the work "A new segmentation approach using dynamic variables on individuals", whose authors are Nicolás Prieto, Henry Laniado and Juan Carlos Monroy.
 
 #### "A new segmentation approach using dynamic variables on individuals"
 ============================================================================
