@@ -22,15 +22,15 @@ de_gapminder = False ### Activate if its any gapminder experiment
 WD_gapminder = False ### Activate only if it is gapminder experiment 3
 
 #### Read data (execute main to generate these datasets)
-datos_e = pd.read_csv('../data/outputs/datos_e.csv')
-datos_pca = pd.read_csv('../data/outputs/datos_pca.csv')
-etiquetas_glo_old = pd.read_csv('../data/outputs/NuestraSegDyn.csv')
+data_e = pd.read_csv('../data/outputs/data_e.csv')
+data_pca = pd.read_csv('../data/outputs/data_pca.csv')
+etiquetas_glo_old = pd.read_csv('../data/outputs/SDVI.csv')
 X_data_df = pd.read_csv('../data/outputs/X_data_df.csv')
 centroids_ite = pd.read_csv('../data/outputs/centroids_ite.csv')
 
 #### Auxiliary variables
-year_i = min(datos_e['Date'])  
-periodos_incluir = max(datos_e['Date']) - year_i
+year_i = min(data_e['Date'])  
+periodos_incluir = max(data_e['Date']) - year_i
 
 ### Number of clusters, number of iterations and distance used
 k = 3
@@ -49,9 +49,9 @@ if WD_gapminder:
 ######################### Compared techniques #############################################
 
 ################# FKMP1 ####
-print('etiquetas_km_fijas_p1')
+print('FKMP1')
 
-datos_df_per1 = datos_e[datos_e['Date'] == year_i]
+datos_df_per1 = data_e[data_e['Date'] == year_i]
 datos_per1 = np.array(datos_df_per1[datos_df_per1.columns[3:]])
 
 numdata = len(datos_per1)
@@ -72,29 +72,29 @@ if de_gapminder:
                                             prev_i=[])
 
     ### Labels are the same in all the periods
-    etiquetas_km_fijas_p1 = etiquetas_glo_old.copy()
-    for perio in range(len(etiquetas_km_fijas_p1)):
-        etiquetas_km_fijas_p1.loc[perio] = np.append(perio, etiquetas.copy())
+    FKMP1 = etiquetas_glo_old.copy()
+    for perio in range(len(FKMP1)):
+        FKMP1.loc[perio] = np.append(perio, etiquetas.copy())
 
     t_fin = (time.time() - t_ini) / 60
     
     ### Append execution time to csv file
-    df5 = pd.DataFrame(etiquetas_km_fijas_p1)
-    df5.to_csv('../data/outputs/etiquetas_km_fijas_p1.csv', header=True, index=False)
+    df5 = pd.DataFrame(FKMP1)
+    df5.to_csv('../data/outputs/FKMP1.csv', header=True, index=False)
     with open('../data/outputs/execution_time.txt', 'a+') as f:
-        f.write(f'\n etiquetas_km_fijas_p1: {t_fin}')
+        f.write(f'\n FKMP1: {t_fin}')
 
 
 ################### SKMP1 #################################
 np.random.seed(semilla)
 
-print('etiquetas_kmeans_per1')
+print('SKMP1')
 t_ini = time.time()
-year_i = min(datos_e['Date'])  
-filtro = datos_e['Date'] == year_i
-X_data_df = datos_e[filtro].reset_index(drop=True)
+year_i = min(data_e['Date'])  
+filtro = data_e['Date'] == year_i
+X_data_df = data_e[filtro].reset_index(drop=True)
 this_indi = pd.unique(X_data_df.country)
-tot_indiv = pd.unique(datos_e.country)
+tot_indiv = pd.unique(data_e.country)
 X_data = np.array(X_data_df[X_data_df.columns[3:]])
 
 numdata = len(X_data)
@@ -115,7 +115,7 @@ etiquetas_km_p1 = []
 for periodos in range(periodos_incluir + 1):
 
     prev_indi = this_indi.copy()
-    X_data_df = datos_e[datos_e['Date'] == year_i + periodos].reset_index(drop=True)
+    X_data_df = data_e[data_e['Date'] == year_i + periodos].reset_index(drop=True)
     this_indi = pd.unique(X_data_df.country)
     X_data = np.array(X_data_df[X_data_df.columns[3:]])
 
@@ -141,21 +141,21 @@ for periodos in range(periodos_incluir + 1):
 
 
 ### Labels
-etiquetas_kmeans_per1 = etiquetas_glo_old.copy()
-for perio in range(len(etiquetas_kmeans_per1)):
-    etiquetas_kmeans_per1.loc[perio] = np.append(perio, etiquetas_km_p1[perio].copy())
+SKMP1 = etiquetas_glo_old.copy()
+for perio in range(len(SKMP1)):
+    SKMP1.loc[perio] = np.append(perio, etiquetas_km_p1[perio].copy())
 
 t_fin = (time.time() - t_ini) / 60
 ### Append execution time to csv file
-df6 = pd.DataFrame(etiquetas_kmeans_per1)
-df6.to_csv('../data/outputs/etiquetas_kmeans_per1.csv', header=True, index=False)
+df6 = pd.DataFrame(SKMP1)
+df6.to_csv('../data/outputs/SKMP1.csv', header=True, index=False)
 with open('../data/outputs/execution_time.txt', 'a+') as f:
-    f.write(f'\n etiquetas_kmeans_per1: {t_fin}')
+    f.write(f'\n SKMP1: {t_fin}')
 
 
 ########### TSKM #####
 np.random.seed(semilla)
-print('etiquetas_ts_km')
+print('TSKM')
 
 ### TSKM is only used for gapminder experiments
 if de_gapminder or WD_gapminder:
@@ -165,7 +165,7 @@ if de_gapminder or WD_gapminder:
     for periodos in range(periodos_incluir + 1):
 
         prev_indi = this_indi.copy()
-        X_data_df = datos_e[datos_e['Date'] <= year_i + periodos].reset_index(drop=True)
+        X_data_df = data_e[data_e['Date'] <= year_i + periodos].reset_index(drop=True)
         this_indi = pd.unique(X_data_df.country)
         X_data = np.array(X_data_df[X_data_df.columns[3:]])
 
@@ -190,29 +190,29 @@ if de_gapminder or WD_gapminder:
         etiquetas_timeseries_kmeans.append(list(etiquetas))
 
     ### Labels for this year
-    etiquetas_ts_km = etiquetas_glo_old.copy()
+    TSKM = etiquetas_glo_old.copy()
     for perio in range(len(etiquetas_timeseries_kmeans)):
-        etiquetas_ts_km.loc[perio] = np.append(perio, etiquetas_timeseries_kmeans[perio].copy())
+        TSKM.loc[perio] = np.append(perio, etiquetas_timeseries_kmeans[perio].copy())
 
     t_fin = (time.time() - t_ini) / 60
     ### Append execution time to csv file
-    df7 = pd.DataFrame(etiquetas_ts_km)
-    df7.to_csv('../data/outputs/etiquetas_ts_km.csv', header=True, index=False)
+    df7 = pd.DataFrame(TSKM)
+    df7.to_csv('../data/outputs/TSKM.csv', header=True, index=False)
 
     with open('../data/outputs/execution_time.txt', 'a+') as f:
-        f.write(f'\n etiquetas_ts_km: {t_fin}')
+        f.write(f'\n TSKM: {t_fin}')
 
 
 
 ############# CKM ##############
 
-print('etiquetas_kmeans_v2')
+print('CKM')
 t_ini = time.time()
 etiquetas_fcm2 = []
 for periodos in range(periodos_incluir + 1):
 
     prev_indi = this_indi.copy()
-    X_data_df = datos_e[datos_e['Date'] <= year_i + periodos].reset_index(drop=True)
+    X_data_df = data_e[data_e['Date'] <= year_i + periodos].reset_index(drop=True)
     this_indi = pd.unique(X_data_df.country)
     X_data = np.array(X_data_df[X_data_df.columns[3:]])
 
@@ -244,16 +244,16 @@ for periodos in range(periodos_incluir + 1):
 
 ### Labels
 etiquetas_fuzzycm2 = etiquetas_glo_old.copy()
-for perio in range(len(etiquetas_kmeans_per1)):
+for perio in range(len(SKMP1)):
     etiquetas_fuzzycm2.loc[perio] = np.append(perio, etiquetas_fcm2[perio].copy())
 
 t_fin = (time.time() - t_ini) / 60
 
 ### Append execution time to csv file
 df8 = pd.DataFrame(etiquetas_fuzzycm2)
-df8.to_csv('../data/outputs/etiquetas_kmeans_v2.csv', header=True, index=False)
+df8.to_csv('../data/outputs/CKM.csv', header=True, index=False)
 with open('../data/outputs/execution_time.txt', 'a+') as f:
-    f.write(f'\n etiquetas_kmeans_v2: {t_fin}')
+    f.write(f'\n CKM: {t_fin}')
     
     
 ################################ Import metrics ########################
@@ -266,43 +266,42 @@ import scipy
 escenarios_c = []
 
 ### SDVI
-escenarios_c.append('NuestraSegDyn')
+escenarios_c.append('SDVI')
 
 ### FKMP1
 if de_gapminder:
-    escenarios_c.append('etiquetas_km_fijas_p1')
+    escenarios_c.append('FKMP1')
 
 ### SKMP1
-escenarios_c.append('etiquetas_kmeans_per1')
+escenarios_c.append('SKMP1')
 
 ### TSKM
 if de_gapminder:
-    escenarios_c.append('etiquetas_ts_km')
+    escenarios_c.append('TSKM')
 
 ### CKM
-escenarios_c.append('etiquetas_kmeans_v2')
+escenarios_c.append('CKM')
 
 ### IKM
-escenarios_c.append('NuestroKmeans_False_False_False')
+escenarios_c.append('IKM')
 
 ### RSDVI
-escenarios_c.append('NuestroKmeans_Robust')
+escenarios_c.append('RSDVI')
 
 ############ Generate labels for SDVI, IKM and RSDVI
 for esce in escenarios_c:
     print(esce)
     ### SDVI
-    if 'NuestraSegDyn' in esce:
+    if 'SDVI' in esce:
         subprocess.call("python main.py", shell=False)
 
     ### IKM
-    if 'NuestroKmeans' in esce:
-        argums_aux = esce.split('_')[1:]
-        argums = ' '.join(argums_aux)
+    if 'IKM' in esce:
+        argums = 'False False False'
         subprocess.call("python main.py " + argums, shell=False)
 
-    ### SRSDVI
-    if 'NuestroKmeans_Robust' in esce:
+    ### RSDVI
+    if 'RSDVI' in esce:
         argums = 'True True True True'
         subprocess.call("python main.py " + argums, shell=False)
 
@@ -330,7 +329,7 @@ for esce in escenarios_c:
         cluster_membership_f = etiquetas_glo[periodos].copy()
 
         ### Labels for period i
-        X_data_df = datos_e[datos_e['Date'] == year_i + periodos].reset_index(drop=True)
+        X_data_df = data_e[data_e['Date'] == year_i + periodos].reset_index(drop=True)
         X_df_aux = X_data_df.copy()
         X_df_aux['etiqes'] = list(cluster_membership_f)
         X_df_aux = X_df_aux[X_df_aux['Date'] == year_i + periodos].reset_index(drop=True)
@@ -341,7 +340,7 @@ for esce in escenarios_c:
             if WD_gapminder:
 
                 WD_real_i = WD_real[WD_real['Date'] == year_i + periodos].reset_index(drop=True)
-                datos_e_i = datos_e[datos_e['Date'] == year_i + periodos].reset_index(drop=True)
+                datos_e_i = data_e[data_e['Date'] == year_i + periodos].reset_index(drop=True)
 
                 reales = datos_e_i.merge(WD_real_i[['country', 'value']], how='left', on='country').value.values
             else:
@@ -409,7 +408,7 @@ for esce in escenarios_c:
                 reales = np.array(clase_pais.copy() )
 
         else:
-            reales = data_sim[datos_e['Date'] == year_i + periodos].group.values
+            reales = data_sim[data_e['Date'] == year_i + periodos].group.values
 
         etiquetas_reales.append(reales)
         
@@ -498,7 +497,7 @@ for esce in escenarios_c:
 
         if voyen == 0:
             df_metr = pd.DataFrame(pd.Series(metri, name=esce))
-            df_metr.index = pd.unique(datos_e['Date'].values)
+            df_metr.index = pd.unique(data_e['Date'].values)
             df_metricas.append(df_metr.copy())
         else:
             df_metr = df_metricas[metri_n]
@@ -508,13 +507,13 @@ for esce in escenarios_c:
     voyen = voyen + 1
 
 ### Save metrics in an Excel file
-path_metr = '../data/outputs/metricas.xlsx'
+path_metr = '../data/outputs/metrics.xlsx'
 
 # Create a Pandas Excel writer using XlsxWriter as the engine.
 writer = pd.ExcelWriter(path_metr, engine='xlsxwriter')
 
 ### Create global confusion matrix metrics sheet
-df_acum_m.to_excel(writer, sheet_name='Métricas_Globales')
+df_acum_m.to_excel(writer, sheet_name='Global_metrics')
 
 ## Create sheets for metrics for each period
 voye = 0
@@ -527,4 +526,4 @@ writer.save()
 
 ### Save real labels
 dfre = pd.DataFrame(etiquetas_reales)
-dfre.reset_index().to_csv('../data/outputs/etiquetas_reales.csv', header=True, index=False)
+dfre.reset_index().to_csv('../data/outputs/real_labels.csv', header=True, index=False)

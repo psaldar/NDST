@@ -36,34 +36,34 @@ logger.info('Start execution')
 
 ### Read data for gapminder experiments
 #experiment = 3
-#datos = pd.read_csv(f'../data/data_gapminder_experiment{experiment}.csv')
+#data = pd.read_csv(f'../data/data_gapminder_experiment{experiment}.csv')
 
 ### Read data for simulated dataset
-datos = pd.read_csv('../data/simulated_data.csv').drop(columns = 'group')
+data = pd.read_csv('../data/simulated_data.csv').drop(columns = 'group')
 
 ### Variables to be used
-datos = datos[datos.columns[:]]
+data = data[data.columns[:]]
 
 ### Variables name
-nomb_vars = datos.columns[2:]
+nomb_vars = data.columns[2:]
 
 
 ### Data standarization
-datos_e = datos.copy()
+data_e = data.copy()
 scaler_es = StandardScaler()
-datos_e[datos_e.columns[2:]] = scaler_es.fit_transform(datos_e[datos_e.columns[2:]])
-datos_e = datos_e.fillna(0)
+data_e[data_e.columns[2:]] = scaler_es.fit_transform(data_e[data_e.columns[2:]])
+data_e = data_e.fillna(0)
 
 ### Applies PCA to all dataset
 pca = PCA(n_components=2)
-datos_pca = pca.fit_transform(datos_e[datos_e.columns[2:]])
+data_pca = pca.fit_transform(data_e[data_e.columns[2:]])
 
 ### The following code is just for style purposes (invert sign of the first
 ### principal component, that way the more to the right the point is, the
 ### country that it represents is more developed)
 de_gapminder = True
 if de_gapminder:
-    datos_pca[:, 0] = datos_pca[:, 0] * -1
+    data_pca[:, 0] = data_pca[:, 0] * -1
 
 ### Fix random seed for replicability purposes
 seed = 10
@@ -71,19 +71,19 @@ seed = 10
 np.random.seed(seed)
 
 ##### Start keeping information from fisrt year
-year_i = min(datos_e['Date'])  ### first year
-filtro = datos_e['Date'] == year_i
-X_data_df = datos_e[filtro].reset_index(drop=True)
+year_i = min(data_e['Date'])  ### first year
+filtro = data_e['Date'] == year_i
+X_data_df = data_e[filtro].reset_index(drop=True)
 this_indi = pd.unique(X_data_df.country)
-tot_indiv = pd.unique(datos_e.country)
+tot_indiv = pd.unique(data_e.country)
 X_data = np.array(X_data_df[X_data_df.columns[2:]])
 
 ### Number of periods that will be included in this study (not including the
 ### first one)
-periodos_incluir = max(datos_e['Date']) - year_i
+periodos_incluir = max(data_e['Date']) - year_i
 
 ### Filter PCA data
-X_data_pca = np.array(datos_pca[filtro])
+X_data_pca = np.array(data_pca[filtro])
 
 ### list where labels assigned to each cluster are stored
 etiquetas_glo = []
@@ -181,12 +181,12 @@ for periodos in range(periodos_incluir):
 
     ### Update data with the current period information
     prev_indi = this_indi.copy()
-    X_data_df = datos_e[datos_e['Date'] == year_i + 1 + periodos].reset_index(drop=True)
+    X_data_df = data_e[data_e['Date'] == year_i + 1 + periodos].reset_index(drop=True)
     this_indi = pd.unique(X_data_df.country)
     X_data = np.array(X_data_df[X_data_df.columns[2:]])
     
     ### Obtain the first two principal components
-    X_data_pca = np.array(datos_pca[datos_e['Date'] == year_i + 1 + periodos])
+    X_data_pca = np.array(data_pca[data_e['Date'] == year_i + 1 + periodos])
 
     ###########################################################################
     ########################### Dynamic weighting #############################
@@ -360,11 +360,11 @@ if not os.path.exists('../data/outputs'):
     os.mkdir('../data/outputs')
 
 ### Save tables in CSV format containing the results of the dynamic segmentation
-df1 = pd.DataFrame(datos_e)
-df1.reset_index().to_csv('../data/outputs/datos_e.csv', header=True, index=False)
+df1 = pd.DataFrame(data_e)
+df1.reset_index().to_csv('../data/outputs/data_e.csv', header=True, index=False)
 
-df2 = pd.DataFrame(datos_pca)
-df2.reset_index().to_csv('../data/outputs/datos_pca.csv', header=True, index=False)
+df2 = pd.DataFrame(data_pca)
+df2.reset_index().to_csv('../data/outputs/data_pca.csv', header=True, index=False)
 
 df3 = pd.DataFrame(X_data_df)
 df3.reset_index().to_csv('../data/outputs/X_data_df.csv', header=True, index=False)
@@ -373,20 +373,20 @@ df4 = pd.DataFrame(etiquetas_glo)
 
 ### whether "args" is considered or not
 if len(sys.argv) == 1:
-    df4.reset_index().to_csv('../data/outputs/NuestraSegDyn.csv', header=True, index=False)
+    df4.reset_index().to_csv('../data/outputs/SDVI.csv', header=True, index=False)
     with open('../data/outputs/execution_time.txt', 'a+') as f:
-        f.write(f'\n NuestraSegDyn: {t_fin}')
+        f.write(f'\n SDVI: {t_fin}')
 
 if len(sys.argv) == 4:
     concat_esc = sys.argv[1] + '_' + sys.argv[2] + '_' + sys.argv[3]
-    df4.reset_index().to_csv('../data/outputs/NuestroKmeans_' + concat_esc + '.csv', header=True, index=False)
+    df4.reset_index().to_csv('../data/outputs/IKM.csv', header=True, index=False)
     with open('../data/outputs/execution_time.txt', 'a+') as f:
-        f.write(f'\n NuestraSegDyn_{concat_esc}: {t_fin}')
+        f.write(f'\n IKM: {t_fin}')
 
 if len(sys.argv) == 5:
-    df4.reset_index().to_csv('../data/outputs/NuestroKmeans_Robust.csv', header=True, index=False)
+    df4.reset_index().to_csv('../data/outputs/RSDVI.csv', header=True, index=False)
     with open('../data/outputs/execution_time.txt', 'a+') as f:
-        f.write(f'\n NuestroKmeans_Robust: {t_fin}')
+        f.write(f'\n RSDVI: {t_fin}')
 
 df5 = pd.DataFrame(imp_periods_var)
 df5.reset_index().to_csv('../data/outputs/imp_periods_var.csv', header=True, index=False)
@@ -406,11 +406,11 @@ centros = np.array(centroids_ite).reshape(-1, largo)
 df7 = pd.DataFrame(centros)
 df7.reset_index().to_csv('../data/outputs/centroids_ite.csv', header=True, index=False)
 
-datos = pd.DataFrame(datos_pca, columns=['component_1', 'component_2'])
-datos = pd.concat([datos_e, datos], axis=1, ignore_index=True)
+data = pd.DataFrame(data_pca, columns=['component_1', 'component_2'])
+data = pd.concat([data_e, data], axis=1, ignore_index=True)
 
 ### Save data
-datos.to_csv('../data/outputs/datos.csv', header=True, index=False)
+data.to_csv('../data/outputs/data.csv', header=True, index=False)
 
 ### Save standard scaler
 import pickle
